@@ -51,10 +51,7 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
 
 
     if (method.getAnnotation(Profiled.class) != null) {
-      //System.out.println("The invokation got here 1 get classes" + method.getDeclaringClass());
-      //System.out.println("The invokation got here 1 get enclosingclass" + method.getDeclaringClass());
 
-      //System.out.println("The invokation got here generic exception" + method.getGenericExceptionTypes()[0]);
 
       Instant startTime = clock.instant();
 
@@ -62,10 +59,6 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
         Object result = method.invoke(delegate, args);
         Duration elapse = Duration.between(startTime, clock.instant());
         data.put(method, elapse);
-        Class<?>[] exceptions = method.getExceptionTypes();
-        for(Class<?> exception: exceptions) {
-          System.out.println("The invokation got here exception" + exception.getClass());
-        }
         return result;
       } catch (Exception e) {
           throw new InvocationTargetException(e);
@@ -98,6 +91,9 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
     }else{
       throw new IllegalArgumentException("Class has No methods annotated with Profiled");
     }
+
+
+
     System.out.println("The invokation got here 3  method name: " + method.getName());
     System.out.println("The invokation got here 3 method decl class : " + method.getDeclaringClass().getInterfaces()[0].getDeclaredMethods());
     System.out.println("The invokation got here 3  proxy class: " + proxy.getClass());
