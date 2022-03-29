@@ -85,7 +85,7 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
           check = check - 1;
         }
       }
-      if (check != methods.length) {
+      if (check == methods.length) {
         throw new IllegalArgumentException("Class has No methods annotated with Profiled");
       }
     }else{
