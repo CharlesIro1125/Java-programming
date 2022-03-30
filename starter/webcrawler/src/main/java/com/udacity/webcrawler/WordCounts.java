@@ -40,14 +40,20 @@ final class WordCounts {
             .sorted((a,b) ->
                     (a.getValue()!=b.getValue()) ? b.getValue() - a.getValue():
                             (a.getValue()==b.getValue()) ? b.getKey().length() - a.getKey().length():
-                    a.getKey().compareTo(b.getKey()))
+                                    (a.getKey().strip().length() == b.getKey().strip().length()) ?
+                                            b.getKey().strip().compareTo(a.getKey().strip())
+                    :b.getKey().length() - a.getKey().length())
             .limit(Long.valueOf(Math.min(val1, val2)))
-            .sorted(new WordCountComparator())
             .collect(Collectors
                     .toMap( p -> p.getKey(), p -> p.getValue(),(a,b)->(a+b)/2,LinkedHashMap::new));
 
 
-
+    Map<String, Integer> TopPriorityCounts2 = wordCounts.entrySet()
+            .stream()
+            .sorted(new WordCountComparator())
+            .limit(Long.valueOf(Math.min(val1, val2)))
+            .collect(Collectors
+                    .toMap( p -> p.getKey(), p -> p.getValue(),(a,b)->(a+b)/2,LinkedHashMap::new));
 
 
 
@@ -60,7 +66,8 @@ final class WordCounts {
       topCounts.put(entry.getKey(), entry.getValue());
     }
 
-    return TopPriorityCounts1;
+    return TopPriorityCounts2;
+    //return topCounts;
   }
 
   /**
