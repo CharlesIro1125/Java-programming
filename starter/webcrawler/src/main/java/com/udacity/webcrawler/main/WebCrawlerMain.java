@@ -60,7 +60,7 @@ public final class WebCrawlerMain {
       profiler.writeData(writer);
     }else {
       Path output = Path.of("src/main/config/",config.getProfileOutputPath());
-    profiler.writeData(output);
+      profiler.writeData(output);
     }
   }
 
