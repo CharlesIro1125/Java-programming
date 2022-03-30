@@ -46,10 +46,9 @@ public final class WebCrawlerModule extends AbstractModule {
   protected void configure() {
     // Multibinder provides a way to implement the strategy pattern through dependency injection.
     Multibinder<WebCrawler> multibinder =
-        Multibinder.newSetBinder(binder(), WebCrawler.class, Internal.class);
-    multibinder.addBinding().to(ParallelWebCrawler.class);
+            Multibinder.newSetBinder(binder(), WebCrawler.class, Internal.class);
     multibinder.addBinding().to(SequentialWebCrawler.class);
-
+    multibinder.addBinding().to(ParallelWebCrawler.class);
 
     bind(Clock.class).toInstance(Clock.systemUTC());
     bind(Key.get(Integer.class, MaxDepth.class)).toInstance(config.getMaxDepth());
@@ -59,34 +58,34 @@ public final class WebCrawlerModule extends AbstractModule {
     bind(new Key<List<Pattern>>(IgnoredWords.class) {}).toInstance(config.getIgnoredWords());
 
     install(
-        new ParserModule.Builder()
-            .setTimeout(config.getTimeout())
-            .setIgnoredWords(config.getIgnoredWords())
-            .build());
+            new ParserModule.Builder()
+                    .setTimeout(config.getTimeout())
+                    .setIgnoredWords(config.getIgnoredWords())
+                    .build());
   }
 
   @Provides
   @Singleton
   @Internal
   WebCrawler provideRawWebCrawler(
-      @Internal Set<WebCrawler> implementations,
-      @TargetParallelism int targetParallelism) {
+          @Internal Set<WebCrawler> implementations,
+          @TargetParallelism int targetParallelism) {
     String override = config.getImplementationOverride();
     if (!override.isEmpty()) {
       return implementations
-          .stream()
-          .filter(impl -> impl.getClass().getName().equals(override))
-          .findFirst()
-          .orElseThrow(() -> new ProvisionException("Implementation not found: " + override));
+              .stream()
+              .filter(impl -> impl.getClass().getName().equals(override))
+              .findFirst()
+              .orElseThrow(() -> new ProvisionException("Implementation not found: " + override));
     }
     return implementations
-        .stream()
-        .filter(impl -> targetParallelism <= impl.getMaxParallelism())
-        .findFirst()
-        .orElseThrow(
-            () -> new ProvisionException(
-                "No implementation able to handle parallelism = \"" +
-                    config.getParallelism() + "\"."));
+            .stream()
+            .filter(impl -> targetParallelism <= impl.getMaxParallelism())
+            .findFirst()
+            .orElseThrow(
+                    () -> new ProvisionException(
+                            "No implementation able to handle parallelism = \"" +
+                                    config.getParallelism() + "\"."));
   }
 
   @Provides
@@ -110,3 +109,5 @@ public final class WebCrawlerModule extends AbstractModule {
   private @interface Internal {
   }
 }
+
+
