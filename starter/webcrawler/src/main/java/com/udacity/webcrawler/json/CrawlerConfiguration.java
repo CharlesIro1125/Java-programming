@@ -254,7 +254,7 @@ public final class CrawlerConfiguration {
      * <p>See {@link #getImplementationOverride()}.
      */
 
-    @JsonProperty("implementationOverrideNew")
+    @JsonProperty("implementationOverride")
     public Builder setImplementationOverride(String implementationOverride) {
       this.implementationOverride = Objects.requireNonNull(implementationOverride);
       return this;
