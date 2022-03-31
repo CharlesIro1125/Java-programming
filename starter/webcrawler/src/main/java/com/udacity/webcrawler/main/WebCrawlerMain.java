@@ -59,7 +59,7 @@ public final class WebCrawlerMain {
       Writer writer = new BufferedWriter(new OutputStreamWriter(System.out));
       profiler.writeData(writer);
     }else {
-      Path output = Path.of("src/main/config/",config.getProfileOutputPath());
+      Path output = Path.of("src/main/java/com/udacity/webcrawler/main/",config.getProfileOutputPath());
       profiler.writeData(output);
     }
   }
