@@ -50,11 +50,11 @@ final class ProfilerImpl implements Profiler {
     proxy = Proxy.newProxyInstance(delegate.getClass().getClassLoader(),
             new Class<?>[]{delegate.getClass().getInterfaces()[0]},
             new ProfilingMethodInterceptor(clock,delegate));
-    //return klass.cast(proxy);
+    return klass.cast(proxy);
 
 
 
-    return delegate;
+    //return delegate;
   }
 
   @Override

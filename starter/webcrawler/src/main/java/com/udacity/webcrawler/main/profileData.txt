@@ -32,3 +32,53 @@ Run at Thu, 31 Mar 2022 09:39:03 GMT
 
 Run at Thu, 31 Mar 2022 09:39:17 GMT
 
+Run at Thu, 31 Mar 2022 09:48:31 GMT
+
+Run at Thu, 31 Mar 2022 09:48:41 GMT
+
+Run at Thu, 31 Mar 2022 09:48:58 GMT
+
+Run at Sat, 2 Apr 2022 09:08:32 GMT
+
+Run at Sat, 2 Apr 2022 10:21:57 GMT
+
+Run at Sat, 2 Apr 2022 10:22:49 GMT
+
+Run at Sat, 2 Apr 2022 10:23:20 GMT
+
+Run at Sat, 2 Apr 2022 10:25:53 GMT
+
+Run at Sat, 2 Apr 2022 10:45:34 GMT
+
+Run at Sat, 2 Apr 2022 10:58:39 GMT
+
+Run at Sat, 2 Apr 2022 11:09:51 GMT
+
+Run at Sat, 2 Apr 2022 12:03:58 GMT
+
+Run at Sat, 2 Apr 2022 12:04:41 GMT
+
+Run at Sat, 2 Apr 2022 12:05:09 GMT
+
+Run at Sat, 2 Apr 2022 12:05:19 GMT
+
+Run at Sat, 2 Apr 2022 12:05:30 GMT
+
+Run at Fri, 8 Apr 2022 08:22:39 GMT
+
+Run at Fri, 8 Apr 2022 08:23:06 GMT
+
+Run at Fri, 8 Apr 2022 08:23:20 GMT
+
+Run at Fri, 8 Apr 2022 09:25:57 GMT
+com.udacity.webcrawler.WebCrawler#crawl took 0m 2s 134ms
+com.udacity.webcrawler.parser.PageParser#parse took 0m 0s 478ms
+
+Run at Fri, 8 Apr 2022 09:28:06 GMT
+com.udacity.webcrawler.WebCrawler#crawl took 0m 2s 306ms
+com.udacity.webcrawler.parser.PageParser#parse took 0m 0s 381ms
+
+Run at Fri, 8 Apr 2022 09:29:33 GMT
+com.udacity.webcrawler.WebCrawler#crawl took 0m 2s 231ms
+com.udacity.webcrawler.parser.PageParser#parse took 0m 0s 269ms
+

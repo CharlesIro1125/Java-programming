@@ -7,9 +7,9 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.RecursiveAction;
-import java.util.concurrent.RecursiveTask;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -22,22 +22,27 @@ public class RecursiveTaskImp extends RecursiveAction {
     private final Clock clock= Clock.systemUTC();
     private final PageParserFactory parserFactory;
     private final List<Pattern> ignoredUrls;
-    private final List<Pattern> ignoredwords;
-    public static Map<String,Integer> countsCollector = new ConcurrentHashMap<>();
-    public static Set<String> visitedUrlsCollector = new ConcurrentSkipListSet<>();
+    private final List<Pattern> ignoredWords;
+    public static ConcurrentHashMap<String,Integer> countsCollector = new ConcurrentHashMap<>();
+    public static ConcurrentSkipListSet<String> visitedUrlsCollector = new ConcurrentSkipListSet<>();
     private static final Object lock1 = new Object();
     private static final Object lock2 = new Object();
 
 
 
-    private RecursiveTaskImp(PageParserFactory parserFactory,List<Pattern> ignoredwords, List<Pattern> ignoredUrls,
-                             Instant deadline, int maxDepth, String url){
+    private RecursiveTaskImp(PageParserFactory parserFactory,List<Pattern> ignoredUrls,List<Pattern> ignoredWords,
+                             Instant deadline, int maxDepth, String url,ConcurrentHashMap<String,Integer> countsCollect,
+                             ConcurrentSkipListSet<String> visitedUrlsCollect){
+
+        this.parserFactory = parserFactory;
+        this.ignoredWords = ignoredWords;
+        this.ignoredUrls = ignoredUrls;
         this.deadline = deadline;
         this.maxDepth = maxDepth;
         this.url = url;
-        this.parserFactory = parserFactory;
-        this.ignoredUrls = ignoredUrls;
-        this.ignoredwords = ignoredwords;
+        countsCollector = countsCollect;
+        visitedUrlsCollector = visitedUrlsCollect;
+
     }
 
 
@@ -46,7 +51,8 @@ public class RecursiveTaskImp extends RecursiveAction {
     private RecursiveTaskImp reBuild(String url){
         return new RecursiveTaskImp.Builder().setDeadline(deadline)
                 .setMaxDepth(maxDepth - 1).setUrl(url).setParserFactory(parserFactory)
-                .setIgnoredUrls(ignoredUrls).setIgnoredWords(ignoredwords).Build();
+                .setIgnoredUrls(ignoredUrls).setIgnoredWords(ignoredWords).setCounts(countsCollector)
+                .setVisitedUrls(visitedUrlsCollector).Build();
     }
 
     public String getUrl(){return this.url;}
@@ -63,47 +69,24 @@ public class RecursiveTaskImp extends RecursiveAction {
                 return;
             }
         }
-        synchronized (lock1) {
-            if (visitedUrlsCollector.contains(url)) {
-                System.out.println("visited Url not added content" + url);
-                return;
-            }
-            try {
-                visitedUrlsCollector.add(url);
-                System.out.println("visited Url added content:  " + url);
-                System.out.println("the max depth from visitedUrl:  " + maxDepth);
-            } catch (Exception e) {
-                System.out.println("error message writing to set: " + e.getLocalizedMessage());
-            }
-        }
+        if (visitedUrlsCollector.contains(url)) {
+            System.out.println("visited Url not added content" + url);
 
-        PageParser.Result result = parserFactory.get(url).parse();
-        if (result.getWordCounts().isEmpty()) {
             return;
         }
+        visitedUrlsCollector.add(url);
+        System.out.println("visited Url added content:  " + url);
+        System.out.println("the max depth from visitedUrl:  " + maxDepth);
 
-        for (Map.Entry<String, Integer> e : result.getWordCounts().entrySet()) {
-            String ekey = e.getKey();
-            int evalue = e.getValue();
-            int matches = 0;
-            if (!ignoredwords.isEmpty()) {
-                for (Pattern pattern : ignoredwords) {
-                    if (pattern.matcher(ekey).matches()) {
-                        matches = matches + 1;
-                    }
+
+        PageParser.Result result = parserFactory.get(url).parse();
+
+        for (ConcurrentMap.Entry<String, Integer> e : result.getWordCounts().entrySet()) {
+            countsCollector.compute(e.getKey(), (k,v) -> (v==null) ? e.getValue(): e.getValue() + v);
+
                 }
-            }
 
-            if (matches == 0) {
-                synchronized (lock2) {
-                    countsCollector.computeIfAbsent(ekey, k -> evalue);
 
-                    countsCollector.computeIfPresent(ekey, (k, v) -> v + evalue);
-                    //System.out.println("the max depth from countCollectors:  " + maxDepth);
-                    //System.out.println("visited Url added countCollectors:  " + url);
-                }
-            }
-        }
 
 
         List<RecursiveTaskImp> subtasks = result.getLinks().stream()
@@ -111,6 +94,7 @@ public class RecursiveTaskImp extends RecursiveAction {
 
 
         invokeAll(subtasks);
+
         return;
     }
 
@@ -122,7 +106,9 @@ public class RecursiveTaskImp extends RecursiveAction {
         private String url;
         private PageParserFactory parserFactory;
         private List<Pattern> ignoredUrls;
-        private List<Pattern> ignoredwords;
+        private List<Pattern> ignoredWords;
+        ConcurrentHashMap<String,Integer> Counts = new ConcurrentHashMap<>();
+        ConcurrentSkipListSet<String> visitedUrls = new ConcurrentSkipListSet<>();
 
         public Builder setDeadline(Instant deadline){
             this.deadline = deadline;
@@ -138,13 +124,21 @@ public class RecursiveTaskImp extends RecursiveAction {
             return this;
         }
 
-        public Builder setIgnoredWords(List<Pattern> ignoredwords){
-            this.ignoredwords = ignoredwords;
+        public Builder setIgnoredWords(List<Pattern> ignoredWords){
+            this.ignoredWords = ignoredWords;
             return this;
         }
 
         public Builder setMaxDepth(int maxDepth){
             this.maxDepth = maxDepth;
+            return this;
+        }
+        public Builder setCounts(ConcurrentHashMap<String,Integer> counts){
+            this.Counts = counts;
+            return this;
+        }
+        public Builder setVisitedUrls(ConcurrentSkipListSet<String> visitedUrls){
+            this.visitedUrls = visitedUrls;
             return this;
         }
 
@@ -155,8 +149,8 @@ public class RecursiveTaskImp extends RecursiveAction {
 
         }
         public RecursiveTaskImp Build(){
-            return new RecursiveTaskImp(this.parserFactory,this.ignoredUrls,this.ignoredwords,this.deadline,
-                    this.maxDepth,this.url);
+            return new RecursiveTaskImp(this.parserFactory,this.ignoredUrls,this.ignoredWords,this.deadline,
+                    this.maxDepth,this.url,this.Counts,this.visitedUrls);
         }
     }
 }

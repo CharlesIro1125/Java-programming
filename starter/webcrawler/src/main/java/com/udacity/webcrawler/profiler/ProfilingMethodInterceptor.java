@@ -61,7 +61,7 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
         data.put(method, elapse);
         return result;
       } catch (Exception e) {
-          throw new InvocationTargetException(e);
+          throw new Exception();
       }
 
 
@@ -86,7 +86,7 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
         }
       }
       if (check == methods.length) {
-        throw new IllegalArgumentException("Class has No methods annotated with Profiled");
+        throw  new IllegalArgumentException("Class has No methods annotated with Profiled");
       }
     }else{
       throw new IllegalArgumentException("Class has No methods annotated with Profiled");
@@ -94,28 +94,23 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
 
 
 
-    System.out.println("The invokation got here 3  method name: " + method.getName());
-    System.out.println("The invokation got here 3 method decl class : " + method.getDeclaringClass().getInterfaces()[0].getDeclaredMethods());
-    System.out.println("The invokation got here 3  proxy class: " + proxy.getClass());
-    System.out.println("The invokation got here 3 interface is annotated : " + method.getDeclaringClass().getMethods());
+    //System.out.println("The invokation got here 3  method name: " + method.getName());
+    //System.out.println("The invokation got here 3 method decl class : " + method.getDeclaringClass().getInterfaces()[0].getDeclaredMethods());
+    //System.out.println("The invokation got here 3  proxy class: " + proxy.getClass());
+    //System.out.println("The invokation got here 3 interface is annotated : " + method.getDeclaringClass().getMethods());
 
     return null;
   }
   public Map<Method,Duration> getProfileState(){return data;}
+
   protected Integer proxyHashcode(Object delegate){
     return System.identityHashCode(delegate);
   }
   protected Object proxyEquals(Object proxy,Object other){
-
-    if(other == proxy){
-      return proxy.equals(other);
-    }else if(!proxy.getClass().isInstance(other)){
-      return !proxy.getClass().isInstance(other);
-    }else if(!other.getClass().isInstance(proxy)) {
-      return !other.getClass().isInstance(proxy);
-    }else {
+    if(proxy !=null && other !=null) {
       return proxy.equals(other);
     }
+    return false;
   }
   protected String proxyToString(Object delegate){
     return delegate.toString();

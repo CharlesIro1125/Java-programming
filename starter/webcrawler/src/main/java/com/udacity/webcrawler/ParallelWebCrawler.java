@@ -1,5 +1,6 @@
 package com.udacity.webcrawler;
 
+import com.google.common.io.CountingInputStream;
 import com.udacity.webcrawler.json.CrawlResult;
 import com.udacity.webcrawler.parser.PageParserFactory;
 
@@ -8,6 +9,8 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ForkJoinPool;
 import java.util.regex.Pattern;
 
@@ -48,24 +51,27 @@ final class ParallelWebCrawler implements WebCrawler {
   @Override
   public CrawlResult crawl(List<String> startingUrls) {
     Instant deadline = clock.instant().plus(timeout);
-    Map<String, Integer> counts = new HashMap<>();
-    Set<String> visitedUrls = new HashSet<>();
+    ConcurrentHashMap<String, Integer> counts = new ConcurrentHashMap<>();
+    ConcurrentSkipListSet<String> visitedUrls = new ConcurrentSkipListSet<>();
     for(String url : startingUrls) {
 
       pool.invoke(new RecursiveTaskImp.Builder()
               .setDeadline(deadline).setMaxDepth(maxDepth).setUrl(url)
               .setParserFactory(pageParserFactory)
-              .setIgnoredUrls(ignoredUrls).setIgnoredWords(ignoredwords).Build());
+              .setIgnoredUrls(ignoredUrls).setIgnoredWords(ignoredwords).setCounts(counts)
+              .setVisitedUrls(visitedUrls).Build());
     }
-    counts = RecursiveTaskImp.countsCollector;
-    visitedUrls = RecursiveTaskImp.visitedUrlsCollector;
 
+
+    //counts = RecursiveTaskImp.countsCollector;
+    //visitedUrls = RecursiveTaskImp.visitedUrlsCollector;
     if (counts.isEmpty()) {
       return new CrawlResult.Builder()
               .setWordCounts(counts)
               .setUrlsVisited(visitedUrls.size())
               .build();
     }
+
 
     return new CrawlResult.Builder()
             .setWordCounts(WordCounts.sort(counts, popularWordCount))
