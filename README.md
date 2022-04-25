@@ -1,5 +1,75 @@
 # Project: Parallel Web Crawler
 
+
+
+This project implements the parallel web crawler and dynamic proxy (Cross Cutting concern) to handle performance profiling.
+
+All required implementation from the details provided below has been performed and this can be used as a legacy code for parallel web crawler implementation.
+
+
+> To use this code, clone the remote repository into your local repository and open with an IDE of your choice (such as Intellij) from the pom.xml file
+"/starter/webcrawler/pom.xml".
+
+
+##### Directory structure of the Web Crawler repository.
+
+```
+└───starter
+    └───webcrawler
+        ├───.idea
+        ├───src
+        │   ├───main
+        │   │   ├───config
+        │   │   └───java
+        │   │       └───com
+        │   │           └───udacity
+        │   │               └───webcrawler
+        │   │                   ├───json
+        │   │                   ├───main
+        │   │                   ├───parser
+        │   │                   └───profiler
+        │   └───test
+        │       ├───data
+        │       └───java
+        │           └───com
+        │               └───udacity
+        │                   └───webcrawler
+        │                       ├───json
+        │                       ├───parser
+        │                       ├───profiler
+        │                       └───testing
+        └───target
+            ├───archive-tmp
+            ├───classes
+            │   └───com
+            │       └───udacity
+            │           └───webcrawler
+            │               ├───json
+            │               ├───main
+            │               ├───parser
+            │               └───profiler
+            ├───generated-sources
+            │   └───annotations
+            ├───generated-test-sources
+            │   └───test-annotations
+            ├───maven-archiver
+            ├───maven-status
+            │   └───maven-compiler-plugin
+            │       ├───compile
+            │       │   └───default-compile
+            │       └───testCompile
+            │           └───default-testCompile
+            ├───surefire-reports
+            └───test-classes
+                └───com
+                    └───udacity
+                        └───webcrawler
+                            ├───json
+                            ├───parser
+                            ├───profiler
+                            └───testing
+```
+
 ![UdaciSearch Logo](UdaciSearch.png)
 
 Welcome! This is your first week at the startup, **UdaciSearch**. You've been hired on as an Engineer, and you're really excited to make a big splash. UdaciSearch is interested in figuring out popular search terms on the internet in order to improve the [SEO](https://en.wikipedia.org/wiki/Search_engine_optimization) of their clients. Everyone wants to pop up at the top of a potential user's search! 
