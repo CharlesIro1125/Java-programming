@@ -2,7 +2,7 @@
 
 
 
-This project implements the parallel web crawler and dynamic proxy (Cross Cutting concern) to handle performance profiling.
+This project implements the parallel web crawler and dynamic proxy (cross cutting concern) to handle performance profiling.
 
 All required implementation from the details provided below has been performed and this can be used as a legacy code for parallel web crawler implementation.
 
