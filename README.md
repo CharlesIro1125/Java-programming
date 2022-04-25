@@ -7,7 +7,7 @@ This project implements the parallel web crawler and dynamic proxy (cross cuttin
 All required implementation from the details provided below has been performed and this can be used as a legacy code for parallel web crawler implementation.
 
 
-> To use this code, clone the remote repository into your local repository and open with an IDE of your choice (such as Intellij) from the pom.xml file
+> To use this code, clone the remote repository into your local repository and open with an IDE of your choice (such as IntelliJ) from the pom.xml file
 "/starter/webcrawler/pom.xml".
 
 
